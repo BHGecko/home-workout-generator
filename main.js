@@ -25,7 +25,7 @@ function getRandomExercise (count = 5) {
 
 function displayWorkout() {
   const workoutList = document.getElementById("workout-list");
-  workoutList.innerHTML = "";
+  workoutList.innerHTML = "workout...";
 
   const selected = getRandomExercises();
 
