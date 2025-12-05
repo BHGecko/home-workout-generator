@@ -4,3 +4,38 @@ body {
     text-align: center;
     padding: 50px;
 }
+
+h1 {
+    color: #333;
+    font-size: 40px;
+    margin-bottom: 30px;
+}
+
+#generate-btn {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    font-size: 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#generate-btn:hover {
+    background-color: #45a049;
+}
+
+#workout-list {
+    margin-top: 30px;
+    background-color: white;
+    display: inline-block;
+    padding: 20px 40px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    min-width: 250px;
+}
+
+#workout-list p {
+    margin: 5px 0;
+}
