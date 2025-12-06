@@ -116,3 +116,31 @@ document.querySelectorAll(".difficulty-btn").forEach(btn => {
 document.getElementById("generate-btn").addEventListener("click", () => {
   displayWorkout();
 });
+
+document.getElementById("download-btn").addEventListener("click", downloadWorkout);
+
+function downloadWorkout() {
+  const workoutList = document.getElementById("workout-list");
+  let text = "Home Workout Plan:\n\n";
+
+  const lis = workoutList.querySelectorAll("li");
+  lis.forEach(li => {
+    text += li.textContent + "\n";
+  });
+
+  const totalP = workoutList.querySelector("p.total-time");
+
+  if (totalP) {
+    text += "\n" + totalP.textContent;
+  }
+
+  const blob = new Blob([text], { type: "text/plain" });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "workout.txt";
+  a.click();
+
+  URL.revokeObjectURL(url);
+}

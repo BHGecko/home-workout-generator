@@ -25,6 +25,7 @@ h1 {
 
 #generate-btn:hover{
     transform: scale(1.2);
+    background-color: #45a049;
 }
 
 #workout-list {
@@ -89,4 +90,21 @@ h1 {
     font-size: 18px;
     margin-top: 20px;
     text-align: left;
+}
+
+#download-btn {
+    background-color: #4c82af;
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    font-size: 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 300ms ease-in-out;
+    margin-left: 10px;
+}
+
+#download-btn:hover {
+    transform: scale(1.2);
+    background-color: #45a049;
 }
