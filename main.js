@@ -69,7 +69,17 @@ function displayWorkout() {
 
     const { reps, sets } = generateRepsAndSets(selectedDifficulty);
 
-    li.textContent = `${ex} — ${reps} reps × ${sets} sets`;
+    // Otp koliko vremena treba
+    const secondsPerRep = 2;
+    const restTime = 10;
+
+    const totalSeconds = (reps * secondsPerRep * sets) + restTime * (sets - 1);
+    // Pretvara u minute ako je preko 60s
+    const timeString = totalSeconds < 60
+      ? `${totalSeconds}s`
+      : `${Math.round(totalSeconds / 60)} min`
+
+    li.textContent = `${ex} — ${reps} reps × ${sets} sets — ${timeString}`;
     ul.appendChild(li); 
   });
 

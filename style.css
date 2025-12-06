@@ -78,8 +78,7 @@ h1 {
  p {
     text-align: left;
     font-size: 15px;
-    margin-top: 350px;
-    margin-bottom: 50px;
+    margin: 10px 0;
     color: #d1cbcb;
     font-family: 'Courier New', Courier, monospace;
 }
