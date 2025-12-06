@@ -25,15 +25,17 @@ function getRandomExercise (count = 5) {
 
 function displayWorkout() {
   const workoutList = document.getElementById("workout-list");
-  workoutList.innerHTML = "workout...";
+  workoutList.innerHTML = ""; // Ovo samo stavi placeholder ali zasto to kada vec imas list exercises. stavio sam "" da clearea sve previous exercises koji su bili generated.
+  const ul = document.createElement("ul"); // lista izgleda bolje
 
-  const selected = getRandomExercises();
+  const selected = getRandomExercise();  //Funkcije se zvala getRandomExercises, ali pravo ime je getRandomExercise. Popravljeno
 
   selected.forEach(ex => {
     const li = document.createElement("li");
     li.textContent = ex;
     workoutList.appendChild(li);
   });
+  workoutList.appendChild(ul)
 }
 
 document.getElementById("generate-btn").addEventListener("click", () => {

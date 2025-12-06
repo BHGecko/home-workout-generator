@@ -29,7 +29,7 @@ h1 {
 }
 
 #workout-list {
-    display: flex;
+    /* Stavio si display flex ali se ne koristi samo izgleda zbijeno kada se generataju workouts */
     user-select: none; 
     cursor: default; 
     margin-top: 30px;
@@ -42,6 +42,11 @@ h1 {
     text-align: left;
 }
 
+#workout-list li {
+    margin-bottom: 10px;
+    font-size: 18px;
+    color: #000;
+}
 
  p {
     text-align: left;
