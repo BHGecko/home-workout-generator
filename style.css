@@ -24,12 +24,10 @@ h1 {
 }
 
 #generate-btn:hover{
-    background-color: #45a049;
     transform: scale(1.2);
 }
 
 #workout-list {
-    /* Stavio si display flex ali se ne koristi samo izgleda zbijeno kada se generataju workouts */
     user-select: none; 
     cursor: default; 
     margin-top: 30px;
@@ -46,6 +44,35 @@ h1 {
     margin-bottom: 10px;
     font-size: 18px;
     color: #000;
+}
+
+#difficulty-select {
+    margin-bottom: 20px;
+}
+
+.difficulty-btn {
+    background-color: #f2f1f3;
+    font-family: Arial, sans-serif;
+    color: #193a94;
+    border: none;
+    border-radius: 8px;
+    padding: 15px 30px;
+    cursor: pointer;
+    transition: 200ms ease;
+    margin: 10px;
+}
+
+.difficulty-btn:hover {
+    background-color: #4c82af;
+    transform: scale(1.2);
+    color: white;
+}
+
+.difficulty-btn.active {
+    background-color: #4c82af; 
+    color: white;
+    transform: scale(1.2);
+    box-shadow: 0 0 20px #4c82af;
 }
 
  p {
