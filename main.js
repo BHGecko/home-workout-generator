@@ -64,27 +64,42 @@ function displayWorkout() {
 
   const selected = getRandomExercise(); 
 
+  let totalSeconds = 0; // defaultno
+
   selected.forEach(ex => {
     const li = document.createElement("li");
 
     const { reps, sets } = generateRepsAndSets(selectedDifficulty);
 
-    // Otp koliko vremena treba
     const secondsPerRep = 2;
     const restTime = 10;
+    const exerciseTime = (reps * secondsPerRep * sets) + restTime * (sets - 1);
 
-    const totalSeconds = (reps * secondsPerRep * sets) + restTime * (sets - 1);
-    // Pretvara u minute ako je preko 60s
-    const timeString = totalSeconds < 60
-      ? `${totalSeconds}s`
-      : `${Math.round(totalSeconds / 60)} min`
+    totalSeconds += exerciseTime;
+
+    const timeString = exerciseTime < 60 
+      ? `${exerciseTime}s` 
+      : `${Math.round(exerciseTime / 60)} min`;
 
     li.textContent = `${ex} — ${reps} reps × ${sets} sets — ${timeString}`;
     ul.appendChild(li); 
   });
 
   workoutList.appendChild(ul);
+
+  const totalTimeString = totalSeconds < 60 
+    ? `${totalSeconds}s` 
+    : `${Math.round(totalSeconds / 60)} min`;
+
+  const totalTimeP = document.createElement("p"); 
+  totalTimeP.textContent = `Total Estimated Time: ${totalTimeString}`;
+  totalTimeP.classList.add("total-time");
+  totalTimeP.style.marginTop = "15px";
+  totalTimeP.style.fontWeight = "bold";
+
+  workoutList.appendChild(totalTimeP);
 }
+
 
 document.querySelectorAll(".difficulty-btn").forEach(btn => {
     btn.addEventListener("click", () => {
