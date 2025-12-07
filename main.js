@@ -4,37 +4,47 @@ let selectedDifficulty = "easy"; // defaultna tezina workouta
 
 const exercises = {
   easy: [
-    "Wall Sit",
-    "Glute Bridges",
-    "Calf Raises",
-    "Plank (easy)",
-    "Superman Hold",
-    "Light Jog in Place"
+    { name: "Wall Sit", tags: ["legs"] },
+    { name: "Glute Bridges", tags: ["legs"] },
+    { name: "Calf Raises", tags: ["legs"] },
+    { name: "Plank (easy)", tags: ["abs"] },
+    { name: "Superman Hold", tags: ["back", "abs"] },
+    { name: "Light Jog in Place", tags: ["cardio"] }
   ],
   medium: [
-    "Push-ups",
-    "Squats",
-    "Lunges",
-    "Bicycle Crunches",
-    "Russian Twists",
-    "Tricep Dips"
+    { name: "Push-ups", tags: ["arms", "chest"] },
+    { name: "Squats", tags: ["legs"] },
+    { name: "Lunges", tags: ["legs"] },
+    { name: "Bicycle Crunches", tags: ["abs"] },
+    { name: "Russian Twists", tags: ["abs"] },
+    { name: "Tricep Dips", tags: ["arms"] }
   ],
   hard: [
-    "Burpees",
-    "Mountain Climbers",
-    "Jumping Jacks",
-    "High Knees",
-    "Plank (hard)",
-    "Jump Squats"
+    { name: "Burpees", tags: ["cardio", "fullbody"] },
+    { name: "Mountain Climbers", tags: ["cardio", "abs"] },
+    { name: "Jumping Jacks", tags: ["cardio"] },
+    { name: "High Knees", tags: ["cardio", "legs"] },
+    { name: "Plank (hard)", tags: ["abs"] },
+    { name: "Jump Squats", tags: ["legs"] },
   ]
 };
 
 function getRandomExercise(count = 5) {
+  const filters = getFilters();
     const list = exercises[selectedDifficulty];
-    const shuffled = [...list].sort(() => Math.random() - 0.5);
+
+  // Filter Logic
+  const filtered = list.filter(ex => {
+    if (filters.noLegs && ex.tags.includes("legs")) return false;
+    if (filters.noArms && ex.tags.includes("arms")) return false;
+    if (filters.noCardio && ex.tags.includes("cardio")) return false;
+    if (filters.noAbs && ex.tags.includes("abs")) return false;
+    return true;
+  })
+    if (filtered.length === 0) return [];
+    const shuffled = [...filtered].sort(() => Math.random() - 0.5);
     return shuffled.slice(0, count);
 }
-
 
 function getRepRange(difficulty) {
   if (difficulty === "easy") return [8, 12];
@@ -57,12 +67,29 @@ function generateRepsAndSets(difficulty) {
   return { reps, sets };
 }
 
+function getFilters() {
+  return {
+    noLegs: document.getElementById("no-legs").checked,
+    noArms: document.getElementById("no-arms").checked,
+    noCardio: document.getElementById("no-cardio").checked,
+    noAbs: document.getElementById("no-abs").checked
+  }
+}
+
 function displayWorkout() {
   const workoutList = document.getElementById("workout-list");
   workoutList.innerHTML = ""; 
   const ul = document.createElement("ul"); 
 
-  const selected = getRandomExercise(); 
+  const selected = getRandomExercise();
+
+  if (selected.length === 0) {
+    const msg = document.createElement("p");
+    msg.textContent = "No exercises available with the selected filters!"
+    msg.style.color = "red";
+    workoutList.appendChild(msg);
+    return;
+  }
 
   let totalSeconds = 0; // defaultno
 
@@ -81,7 +108,7 @@ function displayWorkout() {
       ? `${exerciseTime}s` 
       : `${Math.round(exerciseTime / 60)} min`;
 
-    li.textContent = `${ex} — ${reps} reps × ${sets} sets — ${timeString}`;
+    li.textContent = `${ex.name} — ${reps} reps × ${sets} sets — ${timeString}`;
     ul.appendChild(li); 
   });
 

@@ -108,3 +108,35 @@ h1 {
     transform: scale(1.2);
     background-color: #45a049;
 }
+
+.filters {
+    margin-top: 15px;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    text-align: center;
+}
+
+.filters label {
+    font-size: 16px;
+    color: #d1cbcb;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    background: #1a1a22;
+    padding: 10px 15px;
+    border-radius: 8px;
+    border: 1px solid #2a2a33;
+    transition: 0.2s ease;
+}
+
+.filters label:hover {
+    background: #2a2a33;
+}
+
+.filters input[type="checkbox"] {
+    transform: scale(1.4);
+    cursor: pointer;
+}
