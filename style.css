@@ -25,7 +25,6 @@ h1 {
 
 #generate-btn:hover{
     transform: scale(1.2);
-    background-color: #45a049;
 }
 
 #workout-list {
@@ -106,7 +105,6 @@ h1 {
 
 #download-btn:hover {
     transform: scale(1.2);
-    background-color: #45a049;
 }
 
 .filters {
