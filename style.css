@@ -39,7 +39,9 @@ h1 {
     max-width: 600px;        
     width: 90%;                 
     text-align: left;
+    box-sizing: border-box;
 }
+
 /* FIX: prevent unwanted UL padding/margin */
 #workout-list ul {
     margin: 0;
@@ -120,6 +122,7 @@ p {
     gap: 20px;
     flex-wrap: wrap;
     text-align: center;
+    align-items: center;
 }
 
 .filters label {
@@ -208,6 +211,12 @@ p {
 
     #workout-list li {
         font-size: 16px;
+    }
+
+    .filters label {
+        width: 100%;
+        max-width: 280px;
+        justify-content: center;
     }
 }
 
