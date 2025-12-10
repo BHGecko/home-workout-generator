@@ -20,7 +20,6 @@ h1 {
     border-radius: 8px;
     cursor: pointer;
     transition: all 300ms ease-in-out;
-    
 }
 
 #generate-btn:hover{
@@ -28,16 +27,23 @@ h1 {
 }
 
 #workout-list {
-    user-select: none; 
-    cursor: default; 
-    margin-top: 30px;
+    user-select: none;
+    cursor: default;
+    margin: 30px auto;          
     background-color: white;
     padding: 20px 40px;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     min-width: 250px;
     min-height: 250px;
+    max-width: 600px;        
+    width: 90%;                 
     text-align: left;
+}
+/* FIX: prevent unwanted UL padding/margin */
+#workout-list ul {
+    margin: 0;
+    padding-left: 20px;
 }
 
 #workout-list li {
@@ -69,16 +75,16 @@ h1 {
 }
 
 .difficulty-btn.active {
-    background-color: #4c82af; 
+    background-color: #4c82af;
     color: white;
     transform: scale(1.2);
     box-shadow: 0 0 20px #4c82af;
 }
 
- p {
-    text-align: left;
+p {
+    text-align: center;
     font-size: 15px;
-    margin: 10px 0;
+    margin: 30px auto;
     color: #d1cbcb;
     font-family: 'Courier New', Courier, monospace;
 }
@@ -137,4 +143,94 @@ h1 {
 .filters input[type="checkbox"] {
     transform: scale(1.4);
     cursor: pointer;
+}
+
+
+@media (max-width: 900px) {
+    body {
+        padding: 20px;
+    }
+
+    h1 {
+        font-size: 32px;
+    }
+
+    #workout-list {
+        padding: 15px 20px;
+        min-width: auto;
+        width: 100%;
+    }
+
+    .difficulty-btn,
+    #generate-btn,
+    #download-btn {
+        padding: 12px 20px;
+        font-size: 15px;
+    }
+
+    .filters {
+        gap: 10px;
+    }
+
+    .filters label {
+        font-size: 14px;
+        padding: 8px 12px;
+    }
+
+    .filters input[type="checkbox"] {
+        transform: scale(1.2);
+    }
+}
+
+@media (max-width: 600px) {
+    h1 {
+        font-size: 26px;
+    }
+
+    .difficulty-btn,
+    #generate-btn,
+    #download-btn {
+        padding: 10px 15px;
+        margin: 5px;
+        font-size: 14px;
+    }
+
+    #difficulty-select {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    #workout-list {
+        padding: 10px;
+        font-size: 16px;
+    }
+
+    #workout-list li {
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 400px) {
+    h1 {
+        font-size: 22px;
+    }
+
+    body {
+        padding: 10px;
+    }
+
+    .filters {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .filters label {
+        width: 100%;
+        justify-content: center;
+    }
+
+    #workout-list {
+        font-size: 15px;
+    }
 }

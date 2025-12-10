@@ -1,6 +1,6 @@
 console.log("Home Workout Generator ready!");
 
-let selectedDifficulty = "easy"; // defaultna tezina workouta
+let selectedDifficulty = "easy"; // default
 
 const exercises = {
   easy: [
@@ -25,25 +25,26 @@ const exercises = {
     { name: "Jumping Jacks", tags: ["cardio"] },
     { name: "High Knees", tags: ["cardio", "legs"] },
     { name: "Plank (hard)", tags: ["abs"] },
-    { name: "Jump Squats", tags: ["legs"] },
+    { name: "Jump Squats", tags: ["legs"] }
   ]
 };
 
 function getRandomExercise(count = 5) {
   const filters = getFilters();
-    const list = exercises[selectedDifficulty];
+  const list = exercises[selectedDifficulty];
 
-  // Filter Logic
   const filtered = list.filter(ex => {
     if (filters.noLegs && ex.tags.includes("legs")) return false;
     if (filters.noArms && ex.tags.includes("arms")) return false;
     if (filters.noCardio && ex.tags.includes("cardio")) return false;
     if (filters.noAbs && ex.tags.includes("abs")) return false;
     return true;
-  })
-    if (filtered.length === 0) return [];
-    const shuffled = [...filtered].sort(() => Math.random() - 0.5);
-    return shuffled.slice(0, count);
+  });
+
+  if (filtered.length === 0) return [];
+
+  const shuffled = [...filtered].sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, count);
 }
 
 function getRepRange(difficulty) {
@@ -73,25 +74,25 @@ function getFilters() {
     noArms: document.getElementById("no-arms").checked,
     noCardio: document.getElementById("no-cardio").checked,
     noAbs: document.getElementById("no-abs").checked
-  }
+  };
 }
 
 function displayWorkout() {
   const workoutList = document.getElementById("workout-list");
-  workoutList.innerHTML = ""; 
-  const ul = document.createElement("ul"); 
+  workoutList.innerHTML = "";
+  const ul = document.createElement("ul");
 
   const selected = getRandomExercise();
 
   if (selected.length === 0) {
     const msg = document.createElement("p");
-    msg.textContent = "No exercises available with the selected filters!"
+    msg.textContent = "No exercises available with the selected filters!";
     msg.style.color = "red";
     workoutList.appendChild(msg);
     return;
   }
 
-  let totalSeconds = 0; // defaultno
+  let totalSeconds = 0;
 
   selected.forEach(ex => {
     const li = document.createElement("li");
@@ -104,62 +105,63 @@ function displayWorkout() {
 
     totalSeconds += exerciseTime;
 
-    const timeString = exerciseTime < 60 
-      ? `${exerciseTime}s` 
+    const timeString = exerciseTime < 60
+      ? `${exerciseTime}s`
       : `${Math.round(exerciseTime / 60)} min`;
 
     li.textContent = `${ex.name} — ${reps} reps × ${sets} sets — ${timeString}`;
-    ul.appendChild(li); 
+    ul.appendChild(li);
   });
 
   workoutList.appendChild(ul);
 
-  const totalTimeString = totalSeconds < 60 
-    ? `${totalSeconds}s` 
+  const totalTimeString = totalSeconds < 60
+    ? `${totalSeconds}s`
     : `${Math.round(totalSeconds / 60)} min`;
 
-  const totalTimeP = document.createElement("p"); 
+  const totalTimeP = document.createElement("p");
   totalTimeP.textContent = `Total Estimated Time: ${totalTimeString}`;
   totalTimeP.classList.add("total-time");
-  totalTimeP.style.marginTop = "15px";
-  totalTimeP.style.fontWeight = "bold";
 
   workoutList.appendChild(totalTimeP);
 }
 
-
 document.querySelectorAll(".difficulty-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-      selectedDifficulty = btn.dataset.level;
+  btn.addEventListener("click", () => {
+    selectedDifficulty = btn.dataset.level;
 
-
-      document.querySelectorAll(".difficulty-btn").forEach(b => 
+    document.querySelectorAll(".difficulty-btn").forEach(b =>
       b.classList.remove("active")
-      );
-      btn.classList.add("active");
-    });
+    );
+
+    btn.classList.add("active");
+  });
 });
 
-document.getElementById("generate-btn").addEventListener("click", () => {
-  displayWorkout();
-});
+// FIX: Set EASY active on first load
+document.querySelector('[data-level="easy"]').classList.add("active");
+
+document.getElementById("generate-btn").addEventListener("click", displayWorkout);
 
 document.getElementById("download-btn").addEventListener("click", downloadWorkout);
 
 function downloadWorkout() {
-  const workoutList = document.getElementById("workout-list");
+  const lis = document.querySelectorAll("#workout-list li");
+
+  // FIX: prevent empty downloads
+  if (lis.length === 0) {
+    alert("Generate a workout first!");
+    return;
+  }
+
   let text = "Home Workout Plan:\n\n";
 
-  const lis = workoutList.querySelectorAll("li");
   lis.forEach(li => {
     text += li.textContent + "\n";
   });
 
-  const totalP = workoutList.querySelector("p.total-time");
-
-  if (totalP) {
-    text += "\n" + totalP.textContent;
-  }
+  const totalP = document.querySelector("#workout-list p.total-time");
+  if (totalP) text += "\n" + totalP.textContent;
 
   const blob = new Blob([text], { type: "text/plain" });
   const url = URL.createObjectURL(blob);
