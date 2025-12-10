@@ -7,14 +7,19 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Home Workout Generator</h1>
+    <div class="hero">
+        <h1>Home Workout Generator</h1>
+        <p class="subtitle">Generate personalized workouts instantly.</p>
+    </div>
      <div id="difficulty-select">
      <button class ="difficulty-btn" data-level="easy">Easy</button>
      <button class ="difficulty-btn" data-level="medium">Medium</button>
      <button class ="difficulty-btn" data-level="hard">Hard</button>
     </div>
-    <button id="generate-btn">Generate Workout</button>
-    <button id="download-btn">Download Workout</button>
+    <div class="action-buttons">
+        <button id="generate-btn">Generate Workout</button>
+        <button id="download-btn">Download Workout</button>
+    </div>
 
     <div class="filters">
         <label><input type="checkbox" id="no-legs">No Legs</label>
@@ -27,7 +32,6 @@
         Your workout will appear here
     </div>
 
-    <p>Home Workout Generator</p>
     <script src="main.js"></script>
 
 </body>
