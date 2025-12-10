@@ -12,7 +12,7 @@ h1 {
 }
 
 #generate-btn {
-    background-color: #4c82af;
+    background-color: #388b69;
     color: white;
     border: none;
     padding: 15px 30px;
@@ -29,29 +29,60 @@ h1 {
 #workout-list {
     user-select: none;
     cursor: default;
-    margin: 30px auto;          
-    background-color: white;
-    padding: 20px 40px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    min-width: 250px;
-    min-height: 250px;
-    max-width: 600px;        
-    width: 90%;                 
-    text-align: left;
-    box-sizing: border-box;
-}
+    margin: 30px auto;
+    padding: 25px 30px;
 
-/* FIX: prevent unwanted UL padding/margin */
+
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(14px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+
+    border-radius: 16px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.35);
+
+    max-width: 600px;
+    width: 90%;
+
+    color: #fff;              
+    font-size: 17px;
+
+    animation: fadeIn 0.3s ease;
+    transition: max-height 0.35s ease, opacity 0.25s ease;
+    overflow: hidden;
+    max-height: 80px;
+    opacity: 0;
+}
 #workout-list ul {
-    margin: 0;
-    padding-left: 20px;
+    padding-left: 0;
 }
 
 #workout-list li {
-    margin-bottom: 10px;
+    list-style: none;
+    padding: 10px 0;
+    margin: 0;
+
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
     font-size: 18px;
-    color: #000;
+}
+
+#workout-list li:last-child {
+    border-bottom: none;
+}
+
+#workout-list p.total-time {
+    margin-top: 18px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.18);
+
+    font-size: 19px;
+    font-weight: bold;
+    color: #fff;
+    text-align: left;
+}
+
+#workout-list.active {
+    max-height: 1000px; /* large enough to fit any list */
+    opacity: 1;
 }
 
 #difficulty-select {
@@ -91,15 +122,17 @@ p {
 }
 
 #workout-list p.total-time {
-    color: #000;
+    color: #ffffff;
     font-weight: bold;
     font-size: 18px;
-    margin-top: 20px;
+    margin-top: 15px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
     text-align: left;
 }
 
 #download-btn {
-    background-color: #4c82af;
+    background-color:  #388b69;
     color: white;
     border: none;
     padding: 15px 30px;
@@ -131,20 +164,31 @@ p {
     align-items: center;
     gap: 8px;
     cursor: pointer;
-    background: #1a1a22;
+    background: rgba(255, 255, 255, 0.05);
     padding: 10px 15px;
-    border-radius: 8px;
-    border: 1px solid #2a2a33;
-    transition: 0.2s ease;
+    border-radius: 30px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    transition: 0.25s ease;
 }
 
 .filters label:hover {
-    background: #2a2a33;
+    background: rgba(255, 255, 255, 0.1);
+    transform: scale(1.03);
+}
+
+
+.filters label.active {
+    background: rgba(76, 130, 175, 0.35);
+    border-color: rgba(76, 130, 175, 0.9);
+    color: white;
+    box-shadow: 0 0 12px rgba(76, 130, 175, 0.7);
 }
 
 .filters input[type="checkbox"] {
-    transform: scale(1.4);
-    cursor: pointer;
+    opacity: 0;
+    position: absolute;
+    pointer-events: none;
 }
 
 .hero {
@@ -339,4 +383,10 @@ button:active, .difficulty-btn:active, #generate-btn:active, #download-btn:activ
         font-size: 15px;
     }
 
+}
+
+/* Smooth appear animation */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
 }
