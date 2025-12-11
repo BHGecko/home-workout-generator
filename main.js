@@ -77,6 +77,16 @@ function getFilters() {
     };
 }
 
+const icons = {
+    legs: "🦵",
+    arms: "💪",
+    abs: "🏋️‍♂️",
+    cardio: "🔥",
+    chest: "🫁",
+    back: "🔙",
+    fullbody: "💥"
+};
+
 function displayWorkout() {
     const workoutList = document.getElementById("workout-list");
 
@@ -100,7 +110,7 @@ function displayWorkout() {
 
     let totalSeconds = 0;
 
-    selected.forEach(ex => {
+    selected.forEach((ex, index) => {
         const li = document.createElement("li");
 
         const { reps, sets } = generateRepsAndSets(selectedDifficulty);
@@ -111,12 +121,21 @@ function displayWorkout() {
 
         totalSeconds += exerciseTime;
 
-        const timeString =
-            exerciseTime < 60
-                ? `${exerciseTime}s`
-                : `${Math.round(exerciseTime / 60)} min`;
+        const timeString = exerciseTime < 60
+            ? `${exerciseTime}s`
+            : `${Math.round(exerciseTime / 60)} min`;
 
-        li.textContent = `${ex.name} — ${reps} reps × ${sets} sets — ${timeString}`;
+        const tagIcons = ex.tags.map(t => icons[t] || "").join(" ");
+
+        li.innerHTML = `
+        <span class="exercise-icons">${tagIcons}</span>
+        ${ex.name} — ${reps} reps × ${sets} sets — ${timeString}
+        `;
+
+        li.style.opacity = "0";
+        li.style.animation = "workoutItemFadeIn 0.45s ease forwards";
+        li.style.animationDelay = `${index * 120}ms`
+
         ul.appendChild(li);
     });
 
@@ -135,6 +154,19 @@ function displayWorkout() {
 
     // ❤️ FIX: trigger animation only AFTER content is inserted
     requestAnimationFrame(() => workoutList.classList.add("active"));
+
+    requestAnimationFrame(() => {
+        const fullHeight = workoutList.scrollHeight;
+
+        workoutList.classList.add("animating");
+        workoutList.style.maxHeight = fullHeight + "px";
+        workoutList.style.opacity = "1",
+
+        setTimeout(() => {
+            workoutList.classList.remove("animating");
+            workoutList.style.maxHeight = "1000px";
+        }, 500);
+    });
 }
 
 document.querySelectorAll(".difficulty-btn").forEach(btn => {
