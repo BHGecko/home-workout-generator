@@ -1,34 +1,77 @@
 console.log("Home Workout Generator ready!");
 
-let selectedDifficulty = "easy"; // default
+// =====================================
+// Difficulty state
+// =====================================
+let selectedDifficulty = "easy";
 
+// =====================================
+// EXERCISE DATABASE
+// =====================================
 const exercises = {
     easy: [
-        { name: "Wall Sit", tags: ["legs"] },
-        { name: "Glute Bridges", tags: ["legs"] },
-        { name: "Calf Raises", tags: ["legs"] },
-        { name: "Plank (easy)", tags: ["abs"] },
-        { name: "Superman Hold", tags: ["back", "abs"] },
-        { name: "Light Jog in Place", tags: ["cardio"] }
+        { name: "Wall Sit", tags: ["legs"], type: "time" },
+        { name: "Glute Bridges", tags: ["legs"], type: "reps" },
+        { name: "Calf Raises", tags: ["legs"], type: "reps" },
+        { name: "Plank (easy)", tags: ["abs"], type: "time" },
+        { name: "Superman Hold", tags: ["back", "abs"], type: "time" },
+        { name: "Light Jog in Place", tags: ["cardio"], type: "time" }
     ],
     medium: [
-        { name: "Push-ups", tags: ["arms", "chest"] },
-        { name: "Squats", tags: ["legs"] },
-        { name: "Lunges", tags: ["legs"] },
-        { name: "Bicycle Crunches", tags: ["abs"] },
-        { name: "Russian Twists", tags: ["abs"] },
-        { name: "Tricep Dips", tags: ["arms"] }
+        { name: "Push-ups", tags: ["arms", "chest"], type: "reps" },
+        { name: "Squats", tags: ["legs"], type: "reps" },
+        { name: "Lunges", tags: ["legs"], type: "reps" },
+        { name: "Bicycle Crunches", tags: ["abs"], type: "reps" },
+        { name: "Russian Twists", tags: ["abs"], type: "reps" },
+        { name: "Tricep Dips", tags: ["arms"], type: "reps" }
     ],
     hard: [
-        { name: "Burpees", tags: ["cardio", "fullbody"] },
-        { name: "Mountain Climbers", tags: ["cardio", "abs"] },
-        { name: "Jumping Jacks", tags: ["cardio"] },
-        { name: "High Knees", tags: ["cardio", "legs"] },
-        { name: "Plank (hard)", tags: ["abs"] },
-        { name: "Jump Squats", tags: ["legs"] }
+        { name: "Burpees", tags: ["cardio", "fullbody"], type: "reps" },
+        { name: "Mountain Climbers", tags: ["cardio", "abs"], type: "time" },
+        { name: "Jumping Jacks", tags: ["cardio"], type: "time" },
+        { name: "High Knees", tags: ["cardio", "legs"], type: "time" },
+        { name: "Plank (hard)", tags: ["abs"], type: "time" },
+        { name: "Jump Squats", tags: ["legs"], type: "reps" }
     ]
 };
 
+// =====================================
+// ICONS
+// =====================================
+const icons = {
+    legs: "🦵",
+    arms: "💪",
+    abs: "🏋️‍♂️",
+    cardio: "🔥",
+    chest: "🫁",
+    back: "🔙",
+    fullbody: "💥"
+};
+
+// =====================================
+// FILTERS
+// =====================================
+function getFilters() {
+    return {
+        noLegs: document.getElementById("no-legs").checked,
+        noArms: document.getElementById("no-arms").checked,
+        noCardio: document.getElementById("no-cardio").checked,
+        noAbs: document.getElementById("no-abs").checked
+    };
+}
+
+// Glow active filter labels
+document.querySelectorAll(".filters label").forEach(label => {
+    const checkbox = label.querySelector("input");
+    checkbox.addEventListener("change", () => {
+        if (checkbox.checked) label.classList.add("active");
+        else label.classList.remove("active");
+    });
+});
+
+// =====================================
+// RANDOM SELECTOR
+// =====================================
 function getRandomExercise(count = 5) {
     const filters = getFilters();
     const list = exercises[selectedDifficulty];
@@ -43,68 +86,52 @@ function getRandomExercise(count = 5) {
 
     if (filtered.length === 0) return [];
 
-    const shuffled = [...filtered].sort(() => Math.random() - 0.5);
-    return shuffled.slice(0, count);
+    return [...filtered].sort(() => Math.random() - 0.5).slice(0, count);
 }
 
+// =====================================
+// VALUE RANGES & RANDOMIZER
+// =====================================
 function getRepRange(difficulty) {
     if (difficulty === "easy") return [8, 12];
     if (difficulty === "medium") return [12, 18];
-    if (difficulty === "hard") return [18, 25];
+    return [18, 25];
+}
+
+function getTimeRange(difficulty) {
+    if (difficulty === "easy") return [20, 35];
+    if (difficulty === "medium") return [30, 45];
+    return [40, 60];
 }
 
 function randomInRange(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-function generateRepsAndSets(difficulty) {
-    const [min, max] = getRepRange(difficulty);
+function generateRepsAndSets(level) {
+    const [min, max] = getRepRange(level);
     const reps = randomInRange(min, max);
-
-    let sets = 3;
-    if (difficulty === "easy") sets = 2;
-    if (difficulty === "hard") sets = 4;
-
+    const sets = level === "easy" ? 2 : level === "hard" ? 4 : 3;
     return { reps, sets };
 }
 
-function getFilters() {
-    return {
-        noLegs: document.getElementById("no-legs").checked,
-        noArms: document.getElementById("no-arms").checked,
-        noCardio: document.getElementById("no-cardio").checked,
-        noAbs: document.getElementById("no-abs").checked
-    };
+function generateTime(level) {
+    const [min, max] = getTimeRange(level);
+    return randomInRange(min, max);
 }
 
-const icons = {
-    legs: "🦵",
-    arms: "💪",
-    abs: "🏋️‍♂️",
-    cardio: "🔥",
-    chest: "🫁",
-    back: "🔙",
-    fullbody: "💥"
-};
-
+// =====================================
+// MAIN RENDER FUNCTION
+// =====================================
 function displayWorkout() {
     const workoutList = document.getElementById("workout-list");
-
-    // Clear old content
     workoutList.innerHTML = "";
-    workoutList.classList.remove("active");
 
-    const ul = document.createElement("ul");
     const selected = getRandomExercise();
+    const ul = document.createElement("ul");
 
     if (selected.length === 0) {
-        const msg = document.createElement("p");
-        msg.textContent = "No exercises available with the selected filters!";
-        msg.style.color = "red";
-        workoutList.appendChild(msg);
-
-        // Trigger animation AFTER content
-        requestAnimationFrame(() => workoutList.classList.add("active"));
+        workoutList.innerHTML = `<p style="color:red">No exercises match your filters!</p>`;
         return;
     }
 
@@ -113,62 +140,56 @@ function displayWorkout() {
     selected.forEach((ex, index) => {
         const li = document.createElement("li");
 
-        const { reps, sets } = generateRepsAndSets(selectedDifficulty);
+        let details = "";
+        let exTime = 0;
 
-        const secondsPerRep = 2;
-        const restTime = 10;
-        const exerciseTime = (reps * secondsPerRep * sets) + restTime * (sets - 1);
+        if (ex.type === "reps") {
+            const { reps, sets } = generateRepsAndSets(selectedDifficulty);
+            details = `${reps} reps × ${sets} sets`;
+            exTime = reps * 2 * sets + (sets - 1) * 10;
+        } else {
+            const secs = generateTime(selectedDifficulty);
+            details = "Time"; // PREVENTS DUPLICATION
+            exTime = secs;
+        }
 
-        totalSeconds += exerciseTime;
-
-        const timeString = exerciseTime < 60
-            ? `${exerciseTime}s`
-            : `${Math.round(exerciseTime / 60)} min`;
+        totalSeconds += exTime;
 
         const tagIcons = ex.tags.map(t => icons[t] || "").join(" ");
 
+        const timeString =
+            exTime < 60 ? `${exTime}s` : `${Math.round(exTime / 60)} min`;
+
         li.innerHTML = `
-        <span class="exercise-icons">${tagIcons}</span>
-        ${ex.name} — ${reps} reps × ${sets} sets — ${timeString}
+            <span class="exercise-icons">${tagIcons}</span>
+            ${ex.name} — ${details} — ${timeString}
         `;
 
         li.style.opacity = "0";
         li.style.animation = "workoutItemFadeIn 0.45s ease forwards";
-        li.style.animationDelay = `${index * 120}ms`
+        li.style.animationDelay = `${index * 120}ms`;
 
         ul.appendChild(li);
     });
 
     workoutList.appendChild(ul);
 
-    const totalTimeString =
+    const totalTime = document.createElement("p");
+    const tStr =
         totalSeconds < 60
             ? `${totalSeconds}s`
             : `${Math.round(totalSeconds / 60)} min`;
+    totalTime.textContent = `Total Estimated Time: ${tStr}`;
+    totalTime.classList.add("total-time");
 
-    const totalTimeP = document.createElement("p");
-    totalTimeP.textContent = `Total Estimated Time: ${totalTimeString}`;
-    totalTimeP.classList.add("total-time");
+    workoutList.appendChild(totalTime);
 
-    workoutList.appendChild(totalTimeP);
-
-    // ❤️ FIX: trigger animation only AFTER content is inserted
-    requestAnimationFrame(() => workoutList.classList.add("active"));
-
-    requestAnimationFrame(() => {
-        const fullHeight = workoutList.scrollHeight;
-
-        workoutList.classList.add("animating");
-        workoutList.style.maxHeight = fullHeight + "px";
-        workoutList.style.opacity = "1",
-
-        setTimeout(() => {
-            workoutList.classList.remove("animating");
-            workoutList.style.maxHeight = "1000px";
-        }, 500);
-    });
+    workoutList.classList.add("active");
 }
 
+// =====================================
+// Event listeners
+// =====================================
 document.querySelectorAll(".difficulty-btn").forEach(btn => {
     btn.addEventListener("click", () => {
         selectedDifficulty = btn.dataset.level;
@@ -176,7 +197,6 @@ document.querySelectorAll(".difficulty-btn").forEach(btn => {
         document.querySelectorAll(".difficulty-btn").forEach(b =>
             b.classList.remove("active")
         );
-
         btn.classList.add("active");
     });
 });
@@ -184,49 +204,8 @@ document.querySelectorAll(".difficulty-btn").forEach(btn => {
 document.querySelector('[data-level="easy"]').classList.add("active");
 
 document.getElementById("generate-btn").addEventListener("click", displayWorkout);
-document.getElementById("download-btn").addEventListener("click", downloadWorkout);
-
-function downloadWorkout() {
-    const lis = document.querySelectorAll("#workout-list li");
-
-    if (lis.length === 0) {
-        alert("Generate a workout first!");
-        return;
-    }
-
-    let text = "Home Workout Plan:\n\n";
-
-    lis.forEach(li => {
-        text += li.textContent + "\n";
-    });
-
-    const totalP = document.querySelector("#workout-list p.total-time");
-    if (totalP) text += "\n" + totalP.textContent;
-
-    const blob = new Blob([text], { type: "text/plain" });
-    const url = URL.createObjectURL(blob);
-
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "workout.txt";
-    a.click();
-
-    URL.revokeObjectURL(url);
-}
-
-document.querySelectorAll(".filters label").forEach(label => {
-    const checkbox = label.querySelector("input");
-
-    checkbox.addEventListener("change", () => {
-        if (checkbox.checked) {
-            label.classList.add("active");
-        } else {
-            label.classList.remove("active");
-        }
-    });
-});
 
 window.addEventListener("DOMContentLoaded", () => {
-    const workoutList = document.getElementById("workout-list");
-    workoutList.style.opacity = "1"; 
+    const list = document.getElementById("workout-list");
+    list.style.opacity = "1";
 });
