@@ -1,1 +1,11 @@
-console.log("This is the landing page.")
+console.log("This is the landing page.");
+
+document.addEventListener("DOMContentLoaded", () => {
+    const hamburger = document.querySelector(".hamburger");
+    const navLinks = document.querySelector(".nav-links");
+
+    hamburger.addEventListener("click", () => {
+        navLinks.classList.toggle("open");
+        hamburger.classList.toggle("open");
+    });
+});

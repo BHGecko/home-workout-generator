@@ -5,20 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NameTemplate</title>
     <link rel="stylesheet" href="landing.css">
+    <link rel="stylesheet" href="navbar.css">
 </head>
 <body>
+<nav class="navbar">
+  <div class="nav-logo">AppName</div>
 
-    <header class="top-header">
-        <h1 class="brand">NameTemplate</h1>
+  <ul class="nav-links">
+    <li><a href="index.html" class="nav-item">Home</a></li>
+    <li><a href="workout.html" class="nav-item active">Workout Generator</a></li>
+    <li><a href="about.html" class="nav-item">About</a></li>
+    <li><a href="contact.html" class="nav-item">Contact</a></li>
+  </ul>
 
-        <nav class="navbar">
-            <a href="index.html" class="active">Home</a>
-            <a href="workout.html">Workout Generator</a>
-            <a href="#">Timer</a>
-            <a href="#">About</a>
-            <a href="#">Contact</a>
-        </nav>
-    </header>
+  <div class="hamburger">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</nav>
 
     <section class="hero">
         <div class="hero-text">

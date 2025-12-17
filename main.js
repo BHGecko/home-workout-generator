@@ -1,13 +1,17 @@
 console.log("Home Workout Generator ready!");
 
-// =====================================
-// Difficulty state
-// =====================================
+document.addEventListener("DOMContentLoaded", () => {
+    const hamburger = document.querySelector(".hamburger");
+    const navLinks = document.querySelector(".nav-links");
+
+    hamburger.addEventListener("click", () => {
+        navLinks.classList.toggle("open");
+        hamburger.classList.toggle("open");
+    });
+});
+
 let selectedDifficulty = "easy";
 
-// =====================================
-// EXERCISE DATABASE
-// =====================================
 const exercises = {
     easy: [
         { name: "Wall Sit", tags: ["legs"], type: "time" },
@@ -35,9 +39,6 @@ const exercises = {
     ]
 };
 
-// =====================================
-// ICONS
-// =====================================
 const icons = {
     legs: "🦵",
     arms: "💪",
@@ -48,9 +49,6 @@ const icons = {
     fullbody: "💥"
 };
 
-// =====================================
-// FILTERS
-// =====================================
 function getFilters() {
     return {
         noLegs: document.getElementById("no-legs").checked,
@@ -60,7 +58,6 @@ function getFilters() {
     };
 }
 
-// Glow active filter labels
 document.querySelectorAll(".filters label").forEach(label => {
     const checkbox = label.querySelector("input");
     checkbox.addEventListener("change", () => {
@@ -69,9 +66,6 @@ document.querySelectorAll(".filters label").forEach(label => {
     });
 });
 
-// =====================================
-// RANDOM SELECTOR
-// =====================================
 function getRandomExercise(count = 5) {
     const filters = getFilters();
     const list = exercises[selectedDifficulty];
@@ -89,9 +83,6 @@ function getRandomExercise(count = 5) {
     return [...filtered].sort(() => Math.random() - 0.5).slice(0, count);
 }
 
-// =====================================
-// VALUE RANGES & RANDOMIZER
-// =====================================
 function getRepRange(difficulty) {
     if (difficulty === "easy") return [8, 12];
     if (difficulty === "medium") return [12, 18];
@@ -120,9 +111,6 @@ function generateTime(level) {
     return randomInRange(min, max);
 }
 
-// =====================================
-// MAIN RENDER FUNCTION
-// =====================================
 function displayWorkout() {
     const workoutList = document.getElementById("workout-list");
     workoutList.innerHTML = "";
@@ -149,7 +137,7 @@ function displayWorkout() {
             exTime = reps * 2 * sets + (sets - 1) * 10;
         } else {
             const secs = generateTime(selectedDifficulty);
-            details = "Time"; // PREVENTS DUPLICATION
+            details = "Time";
             exTime = secs;
         }
 
@@ -167,7 +155,7 @@ function displayWorkout() {
 
         li.style.opacity = "0";
         li.style.animation = "workoutItemFadeIn 0.45s ease forwards";
-        li.style.animationDelay = `${index * 120}ms`;
+        li.style.animationDelay = `${index * 150}ms`;
 
         ul.appendChild(li);
     });
@@ -187,9 +175,6 @@ function displayWorkout() {
     workoutList.classList.add("active");
 }
 
-// =====================================
-// Event listeners
-// =====================================
 document.querySelectorAll(".difficulty-btn").forEach(btn => {
     btn.addEventListener("click", () => {
         selectedDifficulty = btn.dataset.level;
@@ -199,6 +184,15 @@ document.querySelectorAll(".difficulty-btn").forEach(btn => {
         );
         btn.classList.add("active");
     });
+});
+
+document.getElementById('download-btn').addEventListener('click', () => {
+    const workoutList = document.getElementById('workout-list').innerText;
+    const blob = new Blob([workoutList], { type: 'text/plain' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'workout.txt';
+    link.click();
 });
 
 document.querySelector('[data-level="easy"]').classList.add("active");
