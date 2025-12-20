@@ -1,21 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NameTemplate</title>
-    <link rel="stylesheet" href="landing.css">
-    <link rel="stylesheet" href="navbar.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AppName</title>
+
+  <link rel="stylesheet" href="navbar.css" />
+  <link rel="stylesheet" href="landing.css" />
 </head>
 <body>
+<div id="menu-backdrop"></div>
 <nav class="navbar">
   <div class="nav-logo">AppName</div>
 
   <ul class="nav-links">
-    <li><a href="index.html" class="nav-item active">Home</a></li>
-    <li><a href="workout.html" class="nav-item">Workout Generator</a></li>
-    <li><a href="about.html" class="nav-item">About</a></li>
-    <li><a href="contact.html" class="nav-item">Contact</a></li>
+    <li><a href="index.html" class="active">Home</a></li>
+    <li><a href="workout.html">Workout Generator</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="contact.html">Contact</a></li>
   </ul>
 
   <div class="hamburger">
@@ -25,39 +27,48 @@
   </div>
 </nav>
 
-    <section class="hero">
-        <div class="hero-content">
-            <h1>Build your perfect workout, and more.</h1>
-            <p>No equipment • Personalized • Instant</p>
-            <a href="workout.html" class="cta-btn">Generate Workout</a>
-        </div>
-    </section>
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-overlay"></div>
 
-    <section class="features">
-      <div class="feature-card">
-        ⚡
-        <h3>Instant Generation</h3>
-        <p>Get a full workout in one click.</p>
-      </div>
+  <div class="hero-content">
+    <span class="hero-eyebrow">SMART FITNESS PLATFORM</span>
+    <h1>Build your perfect workout</h1>
+    <p>No equipment. No guesswork. Just results.</p>
 
-      <div class="feature-card">
-        🎯
-        <h3>Smart Filtering</h3>
-        <p>Exclude muscles & choose dificulty.</p>
-      </div>
+    <div class="hero-actions">
+      <a href="workout.html" class="cta-btn primary">Generate Workout</a>
+      <a href="#features" class="cta-btn ghost">How it works</a>
+    </div>
+  </div>
+</section>
 
-      <div class="feature-card">
-        ⏱
-        <h3>Time & Reps</h3>
-        <p>Balanced workouts that make sense.</p>
-      </div>
-    </section>
+<!-- FEATURES -->
+<section class="features" id="features">
+  <div class="feature-card reveal">
+    ⚡
+    <h3>Instant Generation</h3>
+    <p>Get a balanced workout in one click.</p>
+  </div>
 
-    <section class="final-cta">
-      <h2>Ready to start training?</h2>
-      <a href="workout.html" class="cta-btn big">Create My Workout</a>
-    </section>
+  <div class="feature-card reveal">
+    🎯
+    <h3>Smart Filtering</h3>
+    <p>Exclude muscles & adjust difficulty.</p>
+  </div>
 
-    <script src="landing.js"></script>
+  <div class="feature-card reveal">
+    ⏱
+    <h3>Time & Reps</h3>
+    <p>Designed to feel natural and effective.</p>
+  </div>
+</section>
+
+<section class="final-cta reveal" >
+  <h2>Ready to start training?</h2>
+  <a href="workout.html" class="cta-btn primary big">Create My Workout</a>
+</section>
+
+<script src="landing.js"></script>
 </body>
 </html>
