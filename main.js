@@ -1,5 +1,12 @@
 console.log("Home Workout Generator ready!");
 
+let currentWorkout = [];
+let currentExerciseIndex = 0;
+let workoutInProgress = false;
+let isResting = false;
+let isPreparing = false;
+let workoutStartTime = null;
+
 document.addEventListener("DOMContentLoaded", () => {
     const hamburger = document.querySelector(".hamburger");
     const navLinks = document.querySelector(".nav-links");
@@ -37,6 +44,12 @@ const exercises = {
         { name: "Plank (hard)", tags: ["abs"], type: "time" },
         { name: "Jump Squats", tags: ["legs"], type: "reps" }
     ]
+};
+
+const difficultySettings = {
+    easy: { reps: 10, time: 20 },
+    medium: { reps: 15, time: 30 },
+    hard: { reps: 20, time: 40 }
 };
 
 const icons = {
@@ -111,34 +124,63 @@ function generateTime(level) {
     return randomInRange(min, max);
 }
 
+function buildWorkout(selectedExercises, difficulty) {
+    return selectedExercises.map(ex => {
+        if (ex.type === "reps") {
+            return {
+                name: ex.name,
+                tags: ex.tags,
+                info: `${difficultySettings[difficulty].reps} reps`,
+                type: "reps"
+            };
+        } else {
+            return {
+                name: ex.name,
+                tags: ex.tags,
+                info: `${difficultySettings[difficulty].time} seconds`,
+                type: "time",
+                duration: difficultySettings[difficulty].time
+            };
+        }
+    });
+}
+
 function displayWorkout() {
+if (workoutInProgress) return;
+    const startBtn = document.getElementById("start-workout-btn");
+    if (startBtn) startBtn.style.display = "none";
     const workoutList = document.getElementById("workout-list");
+
+    workoutInProgress = false;
+    currentWorkout = [];
+    currentExerciseIndex = 0;
+
     workoutList.innerHTML = "";
 
-    const selected = getRandomExercise();
+    const rawExercises = getRandomExercise();
+    const workout = buildWorkout(rawExercises, selectedDifficulty);
+
+    currentWorkout = workout;
+    currentExerciseIndex = 0;
     const ul = document.createElement("ul");
 
-    if (selected.length === 0) {
+    if (workout.length === 0) {
         workoutList.innerHTML = `<p style="color:red">No exercises match your filters!</p>`;
         return;
     }
 
     let totalSeconds = 0;
 
-    selected.forEach((ex, index) => {
+    workout.forEach((ex, index) => {
         const li = document.createElement("li");
 
         let details = "";
         let exTime = 0;
 
-        if (ex.type === "reps") {
-            const { reps, sets } = generateRepsAndSets(selectedDifficulty);
-            details = `${reps} reps × ${sets} sets`;
-            exTime = reps * 2 * sets + (sets - 1) * 10;
+        if (ex.type === "time") {
+            exTime = ex.duration;
         } else {
-            const secs = generateTime(selectedDifficulty);
-            details = "Time";
-            exTime = secs;
+            exTime = difficultySettings[selectedDifficulty].reps * 3;
         }
 
         totalSeconds += exTime;
@@ -150,7 +192,7 @@ function displayWorkout() {
 
         li.innerHTML = `
             <span class="exercise-icons">${tagIcons}</span>
-            ${ex.name} — ${details} — ${timeString}
+            ${ex.name} — ${ex.info}
         `;
 
         li.style.opacity = "0";
@@ -158,9 +200,14 @@ function displayWorkout() {
         li.style.animationDelay = `${index * 150}ms`;
 
         ul.appendChild(li);
-    });
 
+    });
     workoutList.appendChild(ul);
+
+    if (startBtn && !workoutInProgress) startBtn.style.display = "inline-block";
+    else if (startBtn) {
+        startBtn.style.display = "none";
+    }
 
     const totalTime = document.createElement("p");
     const tStr =
@@ -174,6 +221,148 @@ function displayWorkout() {
 
     workoutList.classList.add("active");
 }
+
+function startWorkout() {
+    const startBtn = document.getElementById("start-workout-btn");
+    workoutInProgress = true;
+    workoutStartTime = Date.now();
+
+    if (startBtn) startBtn.style.display = "none";
+
+    isPreparing = true;
+    showCurrentExercise();
+}
+
+function showCurrentExercise() {
+    const workoutList = document.getElementById("workout-list");
+    workoutList.innerHTML = "";
+
+    if (currentExerciseIndex >= currentWorkout.length) {
+        workoutInProgress = false;
+        isResting = false;
+        const durationMs = Date.now() - workoutStartTime;
+        const minutes = Math.floor(durationMs / 60000);
+        const seconds = Math.floor((durationMs % 60000) / 1000);
+
+        workoutList.innerHTML = `
+            <h2>🎉 Workout Complete!</h2>
+            <p>⏱️ Time: ${minutes}m ${seconds}s</p>
+            <p>🏋️ Exercises: ${currentWorkout.length}</p>
+            <p>🔥 Difficulty: ${selectedDifficulty}</p>
+        `;
+
+        document
+            .getElementById("new-workout-btn")
+            .addEventListener("click", () => {
+                workoutInProgress = false;
+                isResting = false;
+                isPreparing = false;
+                displayWorkout();
+            });
+        return;
+    }
+
+    if (isPreparing) {
+        let prepTime = 5;
+
+        workoutList.innerHTML = `
+            <h2>⏳ Get Ready</h2>
+            <p>Starting in ${prepTime}...</p>
+        `;
+
+        const interval = setInterval(() => {
+            prepTime--;
+            workoutList.querySelector("p").textContent = 
+                `Starting in ${prepTime}...`;
+            
+            if (prepTime <= 0) {
+                clearInterval(interval);
+                isPreparing = false;
+                showCurrentExercise();
+            }         
+        }, 1000);
+
+        return;
+    }
+
+    if (isResting) {
+        let restTime = 30;
+
+        workoutList.innerHTML = `
+            <h2>🧘 Rest</h2>
+            <p>⏱️ ${restTime} seconds</p>
+            <button id="skip-rest-btn">Skip Rest</button>
+        `;
+
+        const interval = setInterval(() => {
+            restTime--;
+            workoutList.querySelector("p").textContent =
+                `⏱️ ${restTime} seconds`;
+
+            if (restTime <= 0) {
+                clearInterval(interval);
+                isResting = false;
+                isPreparing = true;
+                showCurrentExercise();
+            }
+        }, 1000);
+
+        document
+            .getElementById("skip-rest-btn")
+            .addEventListener("click", () => {
+                clearInterval(interval);
+                isResting = false;
+                isPreparing = true;
+                showCurrentExercise();
+            });
+
+        return;
+    }
+
+    const ex = currentWorkout[currentExerciseIndex];
+    const tagIcons = ex.tags.map(t => icons[t] || "").join(" ");
+
+    if (ex.type === "time") {
+        let remaining = ex.duration;
+
+        workoutList.innerHTML = `
+            <h2>${tagIcons} ${ex.name}</h2>
+            <p>⏱️ ${remaining} seconds</p>
+        `;
+
+        const interval = setInterval(() => {
+            remaining--;
+            workoutList.querySelector("p").textContent =
+                `⏱️ ${remaining} seconds`;
+
+            if (remaining <= 0) {
+                clearInterval(interval);
+                currentExerciseIndex++;
+                if (currentExerciseIndex < currentWorkout.length) {
+                    isResting = true;
+                }
+                showCurrentExercise();
+            }
+        }, 1000);
+
+        return;
+    }
+
+    workoutList.innerHTML = `
+        <h2>${tagIcons} ${ex.name}</h2>
+        <p>${ex.info}</p>
+        <button id="next-exercise-btn">Next Exercise</button>
+    `;
+
+    document.getElementById("next-exercise-btn").addEventListener("click", () => {
+        currentExerciseIndex++;
+        if (currentExerciseIndex < currentWorkout.length) {
+            isResting = true;
+        }
+        showCurrentExercise();
+    });
+}
+
 
 document.querySelectorAll(".difficulty-btn").forEach(btn => {
     btn.addEventListener("click", () => {
@@ -203,3 +392,7 @@ window.addEventListener("DOMContentLoaded", () => {
     const list = document.getElementById("workout-list");
     list.style.opacity = "1";
 });
+
+document
+    .getElementById("start-workout-btn")
+    ?.addEventListener("click", startWorkout);
