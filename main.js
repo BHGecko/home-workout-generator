@@ -226,10 +226,12 @@ function startWorkout() {
     const startBtn = document.getElementById("start-workout-btn");
     workoutInProgress = true;
     workoutStartTime = Date.now();
+    currentExerciseIndex = 0;
 
     if (startBtn) startBtn.style.display = "none";
 
     isPreparing = true;
+    isResting = false;
     showCurrentExercise();
 }
 
@@ -250,6 +252,15 @@ function showCurrentExercise() {
             <p>🏋️ Exercises: ${currentWorkout.length}</p>
             <p>🔥 Difficulty: ${selectedDifficulty}</p>
         `;
+
+        saveWorkout({
+            date: new Date().toLocaleDateString(),
+            duration: `${minutes}m ${seconds}s`,
+            exercises: currentWorkout.length,
+            difficulty: selectedDifficulty
+        });
+
+        renderSavedWorkouts();
 
         document
             .getElementById("new-workout-btn")
@@ -396,3 +407,33 @@ window.addEventListener("DOMContentLoaded", () => {
 document
     .getElementById("start-workout-btn")
     ?.addEventListener("click", startWorkout);
+
+function saveWorkout(summary) {
+    const saved = JSON.parse(localStorage.getItem("savedWorkouts")) || [];
+    saved.push(summary);
+    localStorage.setItem("savedWorkouts", JSON.stringify(saved));
+}
+
+function renderSavedWorkouts() {
+    const list = document.getElementById("workout-history")
+    if (!list) return;
+
+    const saved = JSON.parse(localStorage.getItem("savedWorkouts")) || [];
+    list.innerHTML = "";
+
+    if (saved.length === 0) {
+        list.innerHTML = "<li>No workouts yet.</li>";
+        return;
+    }
+
+    saved.forEach(w => {
+        const li = document.createElement("li");
+        li.textContent = 
+            `${w.date} • ${w.duration} • ${w.exercises} exercises • ${w.difficulty}`;
+        list.appendChild(li);
+    });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    renderSavedWorkouts();
+});

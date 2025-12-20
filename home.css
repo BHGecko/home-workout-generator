@@ -299,6 +299,40 @@ button:active, .difficulty-btn:active, #generate-btn:active, #download-btn:activ
     width: 100%;
 }
 
+#my-workouts {
+    max-width: 600px;
+    margin: 30px auto;
+    padding: 25px 30px;
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(14px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.35);
+    color: #fff;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+#my-workouts h2 {
+    margin-bottom: 15px;
+    color: #fff;
+}
+
+#workout-history {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#workout-history li {
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    font-size: 16px;
+}
+
+#workout-history li:last-child {
+    border-bottom: none;
+}
+
 @media (max-width: 900px) {
     body {
         padding: 20px;
