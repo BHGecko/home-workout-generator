@@ -19,6 +19,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
 let selectedDifficulty = "easy";
 
+let workoutLength = 5;
+
+document.querySelectorAll(".length-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+        workoutLength = parseInt(btn.dataset.count);
+
+        document.querySelectorAll(".length-btn").forEach(b => 
+            b.classList.remove("active")
+        );
+        btn.classList.add("active");
+    });
+});
+
+document.querySelector('.length-btn[data-count="5"]').classList.add("active");
+
 const exercises = {
     easy: [
         { name: "Wall Sit", tags: ["legs"], type: "time" },
@@ -45,6 +60,17 @@ const exercises = {
         { name: "Jump Squats", tags: ["legs"], type: "reps" }
     ]
 };
+
+const warmUpExercises = [
+    { name: "Jumping Jacks", tags: ["cardio"], duration: 30 },
+    { name: "Arm Circles", tags: ["arms"], duration: 30 }
+];
+
+const coolDownExercises = [
+    { name: "Stretching", tags: ["fullbody"], duration: 40 },
+    { name: "Deep Breathing", tags: ["abs"], duration: 30 }
+];
+
 
 const difficultySettings = {
     easy: { reps: 10, time: 20 },
@@ -79,9 +105,17 @@ document.querySelectorAll(".filters label").forEach(label => {
     });
 });
 
-function getRandomExercise(count = 5) {
+function getRandomExercise(count, type = "main") {
     const filters = getFilters();
-    const list = exercises[selectedDifficulty];
+    let list;
+
+    if (type === "warmup") {
+        list = exercises["easy"]; 
+    } else if (type === "cooldown") {
+        list = exercises["easy"]; 
+    } else {
+        list = exercises[selectedDifficulty];
+    }
 
     const filtered = list.filter(ex => {
         if (filters.noLegs && ex.tags.includes("legs")) return false;
@@ -93,7 +127,8 @@ function getRandomExercise(count = 5) {
 
     if (filtered.length === 0) return [];
 
-    return [...filtered].sort(() => Math.random() - 0.5).slice(0, count);
+    return [...filtered].sort(() => Math.random() - 0.5).slice(0, count)
+        .map(ex => ({ ...ex, type }));
 }
 
 function getRepRange(difficulty) {
@@ -125,74 +160,104 @@ function generateTime(level) {
 }
 
 function buildWorkout(selectedExercises, difficulty) {
-    return selectedExercises.map(ex => {
+    const workout = [];
+
+    warmUpExercises.forEach(ex => {
+        workout.push({
+            ...ex,
+            type: "warmup",
+            info: `${ex.duration} seconds`
+        });
+    });
+
+    selectedExercises.forEach(ex => {
         if (ex.type === "reps") {
-            return {
+            workout.push({
                 name: ex.name,
                 tags: ex.tags,
                 info: `${difficultySettings[difficulty].reps} reps`,
                 type: "reps"
-            };
+            });
         } else {
-            return {
+            workout.push({
                 name: ex.name,
                 tags: ex.tags,
                 info: `${difficultySettings[difficulty].time} seconds`,
                 type: "time",
                 duration: difficultySettings[difficulty].time
-            };
+            });
         }
     });
+
+    coolDownExercises.forEach(ex => {
+        workout.push({
+            ...ex,
+            type: "cooldown",
+            info: `${ex.duration} seconds`
+        });
+    });
+
+    return workout;
 }
 
+
 function displayWorkout() {
-if (workoutInProgress) return;
+    if (workoutInProgress) return;
+
     const startBtn = document.getElementById("start-workout-btn");
     if (startBtn) startBtn.style.display = "none";
+
     const workoutList = document.getElementById("workout-list");
+    workoutList.innerHTML = "";
 
     workoutInProgress = false;
     currentWorkout = [];
     currentExerciseIndex = 0;
 
-    workoutList.innerHTML = "";
+    const totalCount = workoutLength;
+    const warmupCount = 2;
+    const cooldownCount = 2;
+    const mainCount = totalCount - warmupCount - cooldownCount;
 
-    const rawExercises = getRandomExercise();
-    const workout = buildWorkout(rawExercises, selectedDifficulty);
+    const warmup = getRandomExercise(warmupCount, "warmup");
+    const mainExercises = getRandomExercise(mainCount, "main");
+    const cooldown = getRandomExercise(cooldownCount, "cooldown");
 
-    currentWorkout = workout;
-    currentExerciseIndex = 0;
-    const ul = document.createElement("ul");
+    currentWorkout = [...warmup, ...mainExercises, ...cooldown];
 
-    if (workout.length === 0) {
+    if (currentWorkout.length === 0) {
         workoutList.innerHTML = `<p style="color:red">No exercises match your filters!</p>`;
         return;
     }
 
+    const ul = document.createElement("ul");
     let totalSeconds = 0;
 
-    workout.forEach((ex, index) => {
+    currentWorkout.forEach((ex, index) => {
         const li = document.createElement("li");
+        li.classList.add("workout-item");
 
-        let details = "";
+        if (ex.type === "warmup") li.classList.add("warmup");
+        else if (ex.type === "cooldown") li.classList.add("cooldown");
+
         let exTime = 0;
+        let info = "";
 
-        if (ex.type === "time") {
-            exTime = ex.duration;
+        if (ex.type === "time" || ex.type === "warmup" || ex.type === "cooldown") {
+            exTime = difficultySettings[selectedDifficulty].time;
+            info = `${exTime} seconds`;
         } else {
             exTime = difficultySettings[selectedDifficulty].reps * 3;
+            info = `${difficultySettings[selectedDifficulty].reps} reps`;
         }
 
         totalSeconds += exTime;
 
         const tagIcons = ex.tags.map(t => icons[t] || "").join(" ");
 
-        const timeString =
-            exTime < 60 ? `${exTime}s` : `${Math.round(exTime / 60)} min`;
-
         li.innerHTML = `
             <span class="exercise-icons">${tagIcons}</span>
-            ${ex.name} — ${ex.info}
+            ${ex.name} — ${info}
         `;
 
         li.style.opacity = "0";
@@ -200,23 +265,16 @@ if (workoutInProgress) return;
         li.style.animationDelay = `${index * 150}ms`;
 
         ul.appendChild(li);
-
     });
+
     workoutList.appendChild(ul);
 
-    if (startBtn && !workoutInProgress) startBtn.style.display = "inline-block";
-    else if (startBtn) {
-        startBtn.style.display = "none";
-    }
+    if (startBtn) startBtn.style.display = "inline-block";
 
     const totalTime = document.createElement("p");
-    const tStr =
-        totalSeconds < 60
-            ? `${totalSeconds}s`
-            : `${Math.round(totalSeconds / 60)} min`;
+    const tStr = totalSeconds < 60 ? `${totalSeconds}s` : `${Math.round(totalSeconds / 60)} min`;
     totalTime.textContent = `Total Estimated Time: ${tStr}`;
     totalTime.classList.add("total-time");
-
     workoutList.appendChild(totalTime);
 
     workoutList.classList.add("active");
@@ -333,7 +391,9 @@ function showCurrentExercise() {
     const ex = currentWorkout[currentExerciseIndex];
     const tagIcons = ex.tags.map(t => icons[t] || "").join(" ");
 
-    if (ex.type === "time") {
+    if (ex.type === "time" || ex.type === "warmup" || ex.type === "cooldown") {
+
+
         let remaining = ex.duration;
 
         workoutList.innerHTML = `

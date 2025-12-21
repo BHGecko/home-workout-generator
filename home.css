@@ -378,6 +378,56 @@ button:active, .difficulty-btn:active, #generate-btn:active, #download-btn:activ
         transform: scale(1.2);
     }
 
+#workout-length-select {
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.length-btn {
+    background-color: #2a2f3a;
+    color: #e0e0e0;
+    border-radius: 8px;
+    font-weight: 600;
+    padding: 10px 22px;
+    cursor: pointer;
+    border: none;
+    transition: 0.25s ease;
+}
+
+.length-btn:hover {
+    background-color: #4c82af;
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(76, 130, 175, 0.4);
+}
+
+.length-btn.active {
+    background-color: #4c82af;
+    color: white;
+    box-shadow: 0 0 18px rgba(76, 130, 175, 0.4);
+    transform: none;
+}
+
+.length-btn:active {
+    background-color: #4c82af;
+    color: white;
+    box-shadow: 0 0 18px rgba(76, 130, 175, 0.4);
+    transform: none;
+}
+
+.workout-item.warmup {
+    border-left: 4px solid #ffb347;
+}
+
+
+.workout-item.cooldown {
+    border-left: 4px solid #ff7a18;
+}
+
 @media (max-width: 600px) {
     h1 {
         font-size: 26px;
