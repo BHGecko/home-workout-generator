@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Progress Tracker</title>
+    <link rel="stylesheet" href="progress.css">
+    <link rel="stylesheet" href="navbar.css">
+</head>
+<body>
+    <div id="menu-backdrop"></div>
+    <nav class="navbar">
+    <div class="nav-logo">AppName</div>
+
+    <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="workout.html">Workout Generator</a></li>
+        <li><a href="progress.html" class="active">Progress</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="contact.html">Contact</a></li>
+    </ul>
+
+    <div class="hamburger">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+    </nav>
+    
+    <div class="hero">
+        <h1>My Progress</h1>
+        <p class="subtitle">Track your workouts, streaks, and total training time</p>
+    </div>
+
+    
+    <div id="streak-hero">
+        <span id="streak-number">0</span> 🔥
+        <p>Current Streak</p>
+    </div>
+
+
+    <div id="progress-container">
+        <h2>Overall Stats</h2>
+        <div id="progress-stats">
+            <p>Total Workouts: <span id="total-workouts">0</span></p>
+            <p>Total Minutes Trained: <span id="total-minutes">0</span></p>
+            <p>Current Streak: <span id="streak-count">0</span> days</p>
+        </div>
+    </div>
+
+    <div id="progress-container">
+        <h2>Workout History</h2>
+        <ul id="progress-list">
+
+        </ul>
+    </div>
+
+    <div class="action-buttons">
+        <button class="action-btn" id="clear-progress-btn">Clear History</button>
+    </div>
+
+<script src="landing.js"></script>
+<script src="main.js"></script>
+</body>
+</html>

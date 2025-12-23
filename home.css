@@ -245,7 +245,7 @@ button:hover {
 }
 
 button:active {
-    transform: sclae(0.97);
+    transform: scale(0.97);
 }
 
 .action-buttons {

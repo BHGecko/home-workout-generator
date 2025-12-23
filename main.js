@@ -10,12 +10,60 @@ let workoutStartTime = null;
 document.addEventListener("DOMContentLoaded", () => {
     const hamburger = document.querySelector(".hamburger");
     const navLinks = document.querySelector(".nav-links");
+    const backdrop = document.getElementById("menu-backdrop");
 
-    hamburger.addEventListener("click", () => {
-        navLinks.classList.toggle("open");
-        hamburger.classList.toggle("open");
+    if (!hamburger || !navLinks || !backdrop) return;
+
+    function getScrollbarWidth() {
+        return window.innerWidth - document.documentElement.clientWidth;
+    }
+
+    function lockScroll() {
+        const scrollbarWidth = getScrollbarWidth();
+        document.body.style.overflow = "hidden";
+
+        if (scrollbarWidth > 0) {
+            document.body.style.paddingRight = `${scrollbarWidth}px`;
+        }
+    }
+
+    function unlockScroll() {
+        document.body.style.overflow = "";
+        document.body.style.paddingRight = "";
+    }
+
+    function openMenu() {
+        hamburger.classList.add("open");
+        navLinks.classList.add("open");
+        backdrop.classList.add("active");
+        lockScroll();
+    }
+
+    function closeMenu() {
+        hamburger.classList.remove("open");
+        navLinks.classList.remove("open");
+        backdrop.classList.remove("active");
+        unlockScroll();
+    }
+
+    function toggleMenu() {
+        navLinks.classList.contains("open") ? closeMenu() : openMenu();
+    }
+
+    hamburger.addEventListener("click", toggleMenu);
+    backdrop.addEventListener("click", closeMenu);
+
+    navLinks.querySelectorAll("a").forEach(link => {
+        link.addEventListener("click", closeMenu);
+    });
+
+    window.addEventListener("resize", () => {
+        if (window.innerWidth > 768) {
+            closeMenu();
+        }
     });
 });
+
 
 let selectedDifficulty = "easy";
 
@@ -32,7 +80,9 @@ document.querySelectorAll(".length-btn").forEach(btn => {
     });
 });
 
-document.querySelector('.length-btn[data-count="5"]').classList.add("active");
+if (document.body.classList.contains("workout-page")) {
+    document.querySelector('.length-btn[data-count="5"]').classList.add("active");
+}
 
 const exercises = {
     easy: [
@@ -315,6 +365,7 @@ function showCurrentExercise() {
             exercises: currentWorkout.length,
             difficulty: selectedDifficulty
         });
+        updateProgress(minutes, seconds);
 
         renderSavedWorkouts();
 
@@ -444,36 +495,101 @@ document.querySelectorAll(".difficulty-btn").forEach(btn => {
     });
 });
 
-document.getElementById('download-btn').addEventListener('click', () => {
-    const workoutList = document.getElementById('workout-list').innerText;
-    const blob = new Blob([workoutList], { type: 'text/plain' });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = 'workout.txt';
-    link.click();
-});
+const downloadBtn = document.getElementById('download-btn');
+if (downloadBtn) {
+    downloadBtn.addEventListener('click', () => {
+        const workoutList = document.getElementById('workout-list').innerText;
+        const blob = new Blob([workoutList], { type: 'text/plain' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'workout.txt';
+        link.click();
+    });
+}
 
-document.querySelector('[data-level="easy"]').classList.add("active");
+const easyBtn = document.querySelector('[data-level="easy"]');
+if (easyBtn) easyBtn.classList.add("active");
 
-document.getElementById("generate-btn").addEventListener("click", displayWorkout);
+const generateBtn = document.getElementById("generate-btn");
+if (generateBtn) {
+    generateBtn.addEventListener("click", displayWorkout);
+}
 
 window.addEventListener("DOMContentLoaded", () => {
     const list = document.getElementById("workout-list");
+    if (!list) return;
     list.style.opacity = "1";
 });
+
+function getProgress() {
+    return JSON.parse(localStorage.getItem("progress")) || {
+        totalWorkouts: 0,
+        totalMinutes: 0,
+        streak: 0,
+        lastWorkoutDate: null,
+        badges: []
+    };
+}
+
+function saveProgress(progress) {
+    localStorage.setItem("progress", JSON.stringify(progress));
+}
+
+function updateProgress(minutes, seconds) {
+    const progress = getProgress();
+
+    const today = new Date();
+    const todayStr = today.toISOString().split("T")[0];
+
+    const lastDate = progress.lastWorkoutDate;
+    let dayDiff = 0;
+
+    if (lastDate) {
+        const last = new Date(lastDate);
+        const diffTime = today - last;
+        dayDiff = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    }
+
+    if (!lastDate) {
+        progress.streak = 1;
+    } else if (dayDiff === 1) {
+        progress.streak += 1;
+    } else if (dayDiff >= 2) {
+        progress.streak = 1;
+    }
+
+    progress.totalWorkouts += 1;
+    progress.totalMinutes += minutes;
+
+    progress.lastWorkoutDate = todayStr;
+
+    if (!progress.badges.includes("first_workout")) {
+        progress.badges.push("first_workout");
+    }
+
+    saveProgress(progress);
+}
 
 document
     .getElementById("start-workout-btn")
     ?.addEventListener("click", startWorkout);
 
-function saveWorkout(summary) {
+function saveWorkout(workout) {
     const saved = JSON.parse(localStorage.getItem("savedWorkouts")) || [];
+
+    const summary = {
+        date: new Date().toISOString(),
+        totalTime: workout.totalTime || 0,
+        exercises: workout.exercises.length,
+        difficulty: workout.difficulty || "medium"
+    };
+
     saved.push(summary);
     localStorage.setItem("savedWorkouts", JSON.stringify(saved));
 }
 
 function renderSavedWorkouts() {
-    const list = document.getElementById("workout-history")
+    const list = document.getElementById("progress-list")
     if (!list) return;
 
     const saved = JSON.parse(localStorage.getItem("savedWorkouts")) || [];
@@ -485,10 +601,13 @@ function renderSavedWorkouts() {
     }
 
     saved.forEach(w => {
+        const date = new Date(w.date);
+        const timeStr = w.totalTime
+            ? (w.totalTime < 60 ? `${w.totalTime}s` : `${Math.round(w.totalTime / 60)}m`)
+            : (w.duration || "—");
         const li = document.createElement("li");
-        li.textContent = 
-            `${w.date} • ${w.duration} • ${w.exercises} exercises • ${w.difficulty}`;
-        list.appendChild(li);
+        li.textContent = `${date.toLocaleDateString()} • ${timeStr} • ${w.exercises} exercises • ${w.difficulty}`;
+        list.appendChild(li); 
     });
 }
 
